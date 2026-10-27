@@ -40,3 +40,8 @@ class Varejo(PoliticaPorFaixas):
 class Corporativo(PoliticaPorFaixas):
     def __init__(self):
         super().__init__(multiplicador=2, teto=Decimal("2000.00"))
+
+
+class Cortesia:
+    def calcular_credito(self, atraso_min: int, frete: Decimal) -> Decimal:
+        return Decimal("0.00")

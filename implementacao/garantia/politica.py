@@ -1,7 +1,22 @@
 """Política de Compensação da Garantia de Prazo (RF02, RF03 e RF04)."""
 from decimal import Decimal
 
+# Limite superior inclusivo de cada faixa, em minutos, e o percentual do frete.
+FAIXAS = (
+    (120, Decimal("0")),
+    (1440, Decimal("0.10")),
+    (4320, Decimal("0.25")),
+)
+PERCENTUAL_ACIMA_DE_72H = Decimal("0.50")
+
+
+def percentual_da_faixa(atraso_min: int) -> Decimal:
+    for limite_min, percentual in FAIXAS:
+        if atraso_min <= limite_min:
+            return percentual
+    return PERCENTUAL_ACIMA_DE_72H
+
 
 class Varejo:
     def calcular_credito(self, atraso_min: int, frete: Decimal) -> Decimal:
-        return Decimal("0.00")
+        return frete * percentual_da_faixa(atraso_min)

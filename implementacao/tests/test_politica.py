@@ -2,7 +2,7 @@
 import unittest
 from decimal import Decimal
 
-from garantia.politica import Varejo
+from garantia.politica import Corporativo, Varejo
 
 
 class VarejoTest(unittest.TestCase):
@@ -37,6 +37,26 @@ class VarejoTest(unittest.TestCase):
         credito = self.politica.calcular_credito(121, Decimal("33.35"))
         self.assertEqual(credito, Decimal("3.34"))
         self.assertEqual(credito.as_tuple().exponent, -2)
+
+
+class CorporativoTest(unittest.TestCase):
+    def setUp(self):
+        self.politica = Corporativo()
+
+    def test_ct09_atraso_de_2h01_gera_20_por_cento(self):
+        self.assertEqual(self.politica.calcular_credito(121, Decimal("300.00")), Decimal("60.00"))
+
+    def test_ct10_atraso_de_24h01_gera_50_por_cento(self):
+        self.assertEqual(self.politica.calcular_credito(1441, Decimal("300.00")), Decimal("150.00"))
+
+    def test_ct11_atraso_de_72h01_gera_100_por_cento(self):
+        self.assertEqual(self.politica.calcular_credito(4321, Decimal("300.00")), Decimal("300.00"))
+
+    def test_ct12_credito_exatamente_no_teto_de_2000(self):
+        self.assertEqual(self.politica.calcular_credito(4321, Decimal("2000.00")), Decimal("2000.00"))
+
+    def test_ct13_credito_acima_do_teto_e_limitado_a_2000(self):
+        self.assertEqual(self.politica.calcular_credito(4321, Decimal("2000.02")), Decimal("2000.00"))
 
 
 if __name__ == "__main__":

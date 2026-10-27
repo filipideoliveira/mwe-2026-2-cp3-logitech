@@ -2,7 +2,7 @@
 import unittest
 from decimal import Decimal
 
-from garantia.politica import Corporativo, Varejo
+from garantia.politica import Corporativo, Cortesia, Varejo
 
 
 class VarejoTest(unittest.TestCase):
@@ -57,6 +57,12 @@ class CorporativoTest(unittest.TestCase):
 
     def test_ct13_credito_acima_do_teto_e_limitado_a_2000(self):
         self.assertEqual(self.politica.calcular_credito(4321, Decimal("2000.02")), Decimal("2000.00"))
+
+
+class CortesiaTest(unittest.TestCase):
+    def test_ct17_cortesia_nao_recebe_credito_mesmo_com_atraso_de_30h(self):
+        # A notificação de atraso do CT17 é responsabilidade do contexto Notificações.
+        self.assertEqual(Cortesia().calcular_credito(1800, Decimal("0.00")), Decimal("0.00"))
 
 
 if __name__ == "__main__":

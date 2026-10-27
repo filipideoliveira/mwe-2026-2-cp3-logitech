@@ -25,3 +25,11 @@ class Varejo:
     def calcular_credito(self, atraso_min: int, frete: Decimal) -> Decimal:
         credito = (frete * percentual_da_faixa(atraso_min)).quantize(CENTAVO, ROUND_HALF_UP)
         return min(credito, self.TETO)
+
+
+class Corporativo:
+    TETO = Decimal("2000.00")
+
+    def calcular_credito(self, atraso_min: int, frete: Decimal) -> Decimal:
+        credito = (frete * percentual_da_faixa(atraso_min) * 2).quantize(CENTAVO, ROUND_HALF_UP)
+        return min(credito, self.TETO)

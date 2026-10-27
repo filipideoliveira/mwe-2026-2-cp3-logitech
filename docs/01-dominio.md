@@ -35,6 +35,8 @@ flowchart LR
     NO --> EM[[Serviço de e-mail atual]]
     RA -- "posição / previsão" --> PO[Portal do Cliente]
     FA -- "saldo de créditos" --> PO
+    GP -- "status da garantia / crédito" --> PO
+    EN -- "confirmação / ausência" --> PO
 ```
 
 | Relação | Tipo | Observação |
@@ -44,7 +46,7 @@ flowchart LR
 | Rastreamento → Garantia | Upstream / Downstream | O Rastreamento entrega só o veredito (`AusenciaComprovada`), sem os dados brutos |
 | Garantia → Faturamento | Customer / Supplier | O Faturamento emite a nota a partir do crédito concedido |
 | Notificações → Parceiro WhatsApp | Anticorruption Layer | A API do parceiro tem formato diferente e é traduzida por um Adapter |
-| Portal ← Rastreamento / Faturamento | Read model (BFF) | O Portal só lê, sem regra de negócio |
+| Portal ← Rastreamento / Faturamento / Garantia / Entrega | Read model (BFF) | O Portal só lê, sem regra de negócio |
 
 ## Entidades e agregados
 

@@ -27,6 +27,17 @@ class VarejoTest(unittest.TestCase):
     def test_ct06_atraso_de_72h01_gera_50_por_cento(self):
         self.assertEqual(self.politica.calcular_credito(4321, Decimal("300.00")), Decimal("150.00"))
 
+    def test_ct07_credito_exatamente_no_teto_de_500(self):
+        self.assertEqual(self.politica.calcular_credito(4321, Decimal("1000.00")), Decimal("500.00"))
+
+    def test_ct08_credito_acima_do_teto_e_limitado_a_500(self):
+        self.assertEqual(self.politica.calcular_credito(4321, Decimal("1000.02")), Decimal("500.00"))
+
+    def test_ct14_credito_arredondado_half_up_para_centavos(self):
+        credito = self.politica.calcular_credito(121, Decimal("33.35"))
+        self.assertEqual(credito, Decimal("3.34"))
+        self.assertEqual(credito.as_tuple().exponent, -2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,17 +19,24 @@ def percentual_da_faixa(atraso_min: int) -> Decimal:
     return PERCENTUAL_ACIMA_DE_72H
 
 
-class Varejo:
-    TETO = Decimal("500.00")
+class PoliticaPorFaixas:
+    """Aplica as faixas do RF02 com um multiplicador e um teto por pedido."""
+
+    def __init__(self, multiplicador: int, teto: Decimal):
+        self.multiplicador = multiplicador
+        self.teto = teto
 
     def calcular_credito(self, atraso_min: int, frete: Decimal) -> Decimal:
-        credito = (frete * percentual_da_faixa(atraso_min)).quantize(CENTAVO, ROUND_HALF_UP)
-        return min(credito, self.TETO)
+        percentual = percentual_da_faixa(atraso_min) * self.multiplicador
+        credito = (frete * percentual).quantize(CENTAVO, ROUND_HALF_UP)
+        return min(credito, self.teto)
 
 
-class Corporativo:
-    TETO = Decimal("2000.00")
+class Varejo(PoliticaPorFaixas):
+    def __init__(self):
+        super().__init__(multiplicador=1, teto=Decimal("500.00"))
 
-    def calcular_credito(self, atraso_min: int, frete: Decimal) -> Decimal:
-        credito = (frete * percentual_da_faixa(atraso_min) * 2).quantize(CENTAVO, ROUND_HALF_UP)
-        return min(credito, self.TETO)
+
+class Corporativo(PoliticaPorFaixas):
+    def __init__(self):
+        super().__init__(multiplicador=2, teto=Decimal("2000.00"))

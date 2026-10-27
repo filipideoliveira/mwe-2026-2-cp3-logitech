@@ -1,5 +1,7 @@
 """Política de Compensação da Garantia de Prazo (RF02, RF03 e RF04)."""
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
+
+CENTAVO = Decimal("0.01")
 
 # Limite superior inclusivo de cada faixa, em minutos, e o percentual do frete.
 FAIXAS = (
@@ -18,5 +20,8 @@ def percentual_da_faixa(atraso_min: int) -> Decimal:
 
 
 class Varejo:
+    TETO = Decimal("500.00")
+
     def calcular_credito(self, atraso_min: int, frete: Decimal) -> Decimal:
-        return frete * percentual_da_faixa(atraso_min)
+        credito = (frete * percentual_da_faixa(atraso_min)).quantize(CENTAVO, ROUND_HALF_UP)
+        return min(credito, self.TETO)

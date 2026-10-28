@@ -61,7 +61,7 @@ class CorporativoTest(unittest.TestCase):
 
 class CortesiaTest(unittest.TestCase):
     def test_ct17_cortesia_nao_recebe_credito_mesmo_com_atraso_de_30h(self):
-        # A notificação de atraso do CT17 é responsabilidade do contexto Notificações.
+        # A publicação de AtrasoConstatado (CT17) é do agregado Garantia, fora da Política de Compensação.
         self.assertEqual(Cortesia().calcular_credito(1800, Decimal("0.00")), Decimal("0.00"))
 
 

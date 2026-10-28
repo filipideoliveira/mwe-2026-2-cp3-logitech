@@ -20,18 +20,35 @@ código que o faz passar.
 
 - Linguagem e framework de teste: Python 3 com `unittest` (biblioteca padrão, sem dependências)
 - Comando para executar os testes (a partir da pasta `implementacao/`): `python3 -m unittest -v`
-- Casos do plano implementados (IDs): CT01 a CT14, CT17 (parte do crédito; a publicação de `AtrasoConstatado` é do
-  agregado `Garantia`, fora da regra de cálculo) e CT18
+- Casos do plano implementados (IDs): CT01 a CT14, CT15, CT17 (parte do crédito; a publicação
+  do aviso de atraso é do agregado `Garantia`, fora da regra de cálculo), CT18, CT19 a CT21 e CT32,
+  mais casos de apoio (limite exato de 2h00m00s, chegada de longe à geocerca, pacote de telemetria
+  perdido, lista de posições vazia e tipo de cliente não registrado)
 - Estrutura, seguindo os padrões de `docs/02-arquitetura.md`:
   - `garantia/politica.py`: **Strategy** da Política de Compensação. `PoliticaPorFaixas` aplica
     as faixas do RF02 com multiplicador e teto; `Varejo`, `Corporativo` e `Cortesia` são as
     estratégias de cada tipo de cliente (RF02 e RF03). As faixas são uma tabela de dados, sem
-    uma classe por faixa (ponto onde a dupla decidiu não aplicar padrão)
+    uma classe por faixa
   - `garantia/fabrica.py`: **Factory** que cria a estratégia pelo tipo de cliente. Um tipo novo é
     só um `registrar(...)` novo, sem alterar as estratégias existentes nem um `if` central (RF04)
+  - `garantia/atraso.py`: cálculo do Atraso em minutos, com qualquer fração de minuto
+    arredondada para cima (RF01)
+  - `garantia/ausencia.py`: **Strategy** `ValidacaoAusencia` (RF05). A ausência é comprovada se
+    as posições anteriores ao registro mostram o veículo dentro da geocerca de 200 m desde pelo
+    menos 10 min antes. A distância é arredondada ao centímetro para não errar o limite exato,
+    e um pacote de telemetria perdido não interrompe a parada (RNF01)
 - Saída da última execução dos testes:
 
 ```
+test_ct15_entrega_antes_do_prazo_tem_atraso_zero ... ok
+test_ct32_fracao_de_minuto_arredonda_para_cima ... ok
+test_entrega_exatamente_2h00m00s_depois_tem_120_min ... ok
+test_chegada_de_longe_conta_a_parada_so_a_partir_da_geocerca ... ok
+test_ct19_parado_a_200m_por_10min00_comprova_ausencia ... ok
+test_ct20_parado_a_201m_nao_comprova_ausencia ... ok
+test_ct21_parado_por_9min59_nao_comprova_ausencia ... ok
+test_pacote_perdido_na_janela_nao_invalida_a_parada ... ok
+test_sem_posicoes_nao_comprova_ausencia ... ok
 test_ct18_tipo_novo_e_registrado_sem_alterar_os_existentes ... ok
 test_fabrica_padrao_cria_a_estrategia_dos_tres_tipos_existentes ... ok
 test_tipo_nao_registrado_e_rejeitado ... ok
@@ -52,7 +69,7 @@ test_ct08_credito_acima_do_teto_e_limitado_a_500 ... ok
 test_ct14_credito_arredondado_half_up_para_centavos ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 0.001s
+Ran 27 tests in 0.003s
 
 OK
 ```

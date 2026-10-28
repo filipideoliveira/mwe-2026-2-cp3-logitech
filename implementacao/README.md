@@ -20,8 +20,8 @@ código que o faz passar.
 
 - Linguagem e framework de teste: Python 3 com `unittest` (biblioteca padrão, sem dependências)
 - Comando para executar os testes (a partir da pasta `implementacao/`): `python3 -m unittest -v`
-- Casos do plano implementados (IDs): CT01 a CT14, CT17 (parte do crédito; a notificação é do
-  contexto Notificações) e CT18
+- Casos do plano implementados (IDs): CT01 a CT14, CT17 (parte do crédito; a publicação de `AtrasoConstatado` é do
+  agregado `Garantia`, fora da regra de cálculo) e CT18
 - Estrutura:
   - `garantia/politica.py`: Strategy da Política de Compensação. `PoliticaPorFaixas` aplica as
     faixas do RF02 com multiplicador e teto; `Varejo`, `Corporativo` e `Cortesia` são as

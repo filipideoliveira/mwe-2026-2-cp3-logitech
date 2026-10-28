@@ -22,6 +22,11 @@ e só então pedia o commit. Os principais pontos de decisão estão na tabela a
 | Tela | Alinhar a tela com o domínio revisado | Novo estado "verificando a garantia", origem do Tipo de Cliente e eventos da garantia | **Aceito** | Consequência direta da espera pelo veredito da ausência (RF05) |
 | Implementação | Implementar a regra em TDD seguindo a arquitetura (Strategy) | Python com `unittest`; ciclos `test:` → `feat:` → `refactor:`, com o teste confirmado em vermelho antes de cada código; faixas como dados em vez de uma classe por faixa | **Aceito.** Os commits de TDD foram feitos pelo assistente, por isso estão com poucos segundos de diferença entre si; a ordem teste → código foi verificada em cada ciclo | `unittest` não exige instalação; o registro de políticas atende o RF04 sem alterar as classes existentes |
 | Implementação | Como visualizar e rodar a implementação | VS Code local, Codespaces, github.dev e o histórico de commits no GitHub; exercício de mutante (`<=` → `<`) para ver o TDD falhar | <!-- COMPLETAR: o que a dupla fez de fato (rodou no Codespaces? fez o exercício do mutante? quais testes falharam?) --> | <!-- COMPLETAR --> |
+| Integração | Revisar a arquitetura feita pelo outro integrante, já na `main` | Lista de contradições com domínio, testes e portal (REST × eventos, origem dos dados do Painel, gatilho do aviso), itens sem requisito (AI Gateway, Singleton), RabbitMQ fora do `compose` e commits fora do padrão Conventional Commits; **recomendação de ajustar a arquitetura** | **Recomendação descartada:** a dupla decidiu manter a arquitetura como referência e refazer domínio, testes, portal e implementação a partir dela | A arquitetura foi o último documento feito por um integrante e já estava na `main`; a dupla preferiu alinhar os outros documentos a ela a reescrever o trabalho do colega |
+| Modelagem | Refazer o domínio com base na arquitetura | RF05 passa para a Garantia de Prazo (`ValidacaoAusencia`, Strategy); RNF01 inteiro no Coletor (UDP + TCP); Frete informa prazo, frete e tipo de cliente; saldo de créditos na Garantia; `NotificacaoSolicitada` como único gatilho de aviso | **Aceito** | A arquitetura não tem ligação entre o Coletor e a Garantia além da fila e do banco, e coloca a validação de ausência como Strategy separada do cálculo. Isso **reverte a decisão anterior** de deixar o RF05 no Rastreamento |
+| Testes | Refazer o plano com base na arquitetura | Dublês trocados para os clientes REST do Frete e do Faturamento e para a publicação na fila; casos novos de idempotência no Faturamento (CT34), telemetria com perda (CT37) e saldo (CT38); remoção dos casos de espera pelo veredito | **Aceito** | Os casos precisam verificar as comunicações que a arquitetura realmente usa |
+| Tela | Refazer o portal com base na arquitetura | Carga inicial por REST no Pedidos, no Frete e na Garantia e dois canais SSE (Frete e Garantia), no lugar do BFF com um único SSE | **Aceito** | É o desenho da arquitetura; o BFF não existe nela |
+| Implementação | Alinhar a implementação com a arquitetura | Trocar o `RegistroPoliticas` por uma `FabricaPoliticas` (Factory), em TDD: teste novo em vermelho, depois o `refactor:` | **Aceito** | A arquitetura usa Strategy + Factory; o código passa a usar os mesmos nomes. As regras do RF02 ao RF04 não mudaram, e os 18 testes continuam passando |
 | Arquitetura | <!-- COMPLETAR pelo integrante que fez a arquitetura: o que foi pedido ao assistente (se foi usado) --> | <!-- COMPLETAR --> | <!-- COMPLETAR --> | <!-- COMPLETAR --> |
 
 ## Sugestões descartadas ou corrigidas
@@ -34,5 +39,11 @@ e só então pedia o commit. Os principais pontos de decisão estão na tabela a
   seria truncado e perderia o crédito.
 - **Aviso de crédito disparado por `CreditoConcedido` e por `NotaDeCreditoEmitida`** (primeira
   versão do mapa): corrigido para um gatilho único, para o cliente não receber dois avisos.
+- **Ajustar a arquitetura ao domínio** (recomendação do assistente na integração): descartada.
+  A dupla manteve a arquitetura e alinhou os outros documentos a ela.
+- **RF05 no Rastreamento, com o evento `AusenciaComprovada`** (primeira modelagem): substituído
+  pela `ValidacaoAusencia` na Garantia, para seguir a arquitetura.
+- **BFF do Portal com um único canal SSE** (primeira versão da tela): substituído por dois
+  canais SSE, do Frete e da Garantia, como na arquitetura.
 - **Arquivos de cache do Python** incluídos por engano nos commits da implementação: removidos
   do histórico antes do push, e um `.gitignore` foi adicionado.
